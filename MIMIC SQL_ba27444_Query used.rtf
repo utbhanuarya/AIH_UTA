@@ -1,0 +1,121 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2821
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red24\green25\blue27;\red167\green0\blue95;\red255\green255\blue255;
+}
+{\*\expandedcolortbl;;\cssrgb\c12549\c12941\c14118;\cssrgb\c72157\c2353\c44706;\cssrgb\c100000\c100000\c100000;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 -- SELECT icd9_code, long_title\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM `physionet-data.mimiciii_demo.d_icd_diagnoses`\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE LOWER(long_title) LIKE 'p%'  -- Ensures long_title starts with "P"\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- AND LOWER(long_title) LIKE '%pneumonia%'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- AND (LOWER(long_title) LIKE '%unspecified%' AND LOWER(long_title) LIKE '%organism unspecified%');\cf2 \cb1 \strokec2 \
+\
+\
+\cf3 \cb4 \strokec3 -- SELECT COUNT(DISTINCT subject_id) AS total_pneumonia_patients\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM `physionet-data.mimiciii_demo.diagnoses_icd`\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE icd9_code = '486';\cf2 \cb1 \strokec2 \
+\
+\
+\cf3 \cb4 \strokec3 -- SELECT gender, COUNT(DISTINCT subject_id) AS patient_count\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM `physionet-data.mimiciii_demo.patients`\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE subject_id IN (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT DISTINCT subject_id FROM `physionet-data.mimiciii_demo.diagnoses_icd` WHERE icd9_code = '486'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- )\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- GROUP BY gender;\cf2 \cb1 \strokec2 \
+\
+\
+\cf3 \cb4 \strokec3 -- SELECT insurance, COUNT(DISTINCT hadm_id) AS admission_count\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM `physionet-data.mimiciii_demo.admissions`\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE hadm_id IN (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT hadm_id FROM `physionet-data.mimiciii_demo.diagnoses_icd` WHERE icd9_code = '486'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- )\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- GROUP BY insurance\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- ORDER BY admission_count DESC\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- LIMIT 5;\cf2 \cb1 \strokec2 \
+\
+\
+\cf3 \cb4 \strokec3 -- SELECT ROUND(AVG(los), 2) AS avg_icu_stay_days\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM `physionet-data.mimiciii_demo.icustays`\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE subject_id IN (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT DISTINCT subject_id FROM `physionet-data.mimiciii_demo.diagnoses_icd` WHERE icd9_code = '486'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- );\cf2 \cb1 \strokec2 \
+\
+\
+\cf3 \cb4 \strokec3 -- SELECT \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     COUNT(DISTINCT hadm_id) AS readmitted_cases,\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     COUNT(DISTINCT subject_id) AS total_patients,\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     ROUND(100.0 * COUNT(DISTINCT hadm_id) / COUNT(DISTINCT subject_id), 2) AS readmission_rate\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM `physionet-data.mimiciii_demo.admissions`\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE subject_id IN (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT subject_id \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     FROM `physionet-data.mimiciii_demo.diagnoses_icd` \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     WHERE icd9_code = '486'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- )\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- AND subject_id IN (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT subject_id \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     FROM `physionet-data.mimiciii_demo.admissions` \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     GROUP BY subject_id \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     HAVING COUNT(hadm_id) > 1\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- );\cf2 \cb1 \strokec2 \
+\
+\
+\cf3 \cb4 \strokec3 -- SELECT p.drug, COUNT(DISTINCT p.hadm_id) AS prescription_count\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM `physionet-data.mimiciii_demo.prescriptions` p\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- JOIN `physionet-data.mimiciii_demo.diagnoses_icd` d ON p.hadm_id = d.hadm_id\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE d.icd9_code = '486'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- GROUP BY p.drug\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- ORDER BY prescription_count DESC\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- LIMIT 5;\cf2 \cb1 \strokec2 \
+\
+\
+\cf3 \cb4 \strokec3 -- SELECT \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     CASE \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --         WHEN age < 18 THEN '0-17'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --         WHEN age BETWEEN 18 AND 40 THEN '18-40'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --         WHEN age BETWEEN 41 AND 60 THEN '41-60'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --         WHEN age BETWEEN 61 AND 80 THEN '61-80'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --         ELSE '80+'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     END AS age_group, \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     COUNT(DISTINCT age_calculated.subject_id) AS patient_count\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT p.subject_id, (EXTRACT(YEAR FROM admittime) - EXTRACT(YEAR FROM dob)) AS age\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     FROM `physionet-data.mimiciii_demo.patients` p\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     JOIN `physionet-data.mimiciii_demo.admissions` a ON p.subject_id = a.subject_id\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- ) AS age_calculated\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE age_calculated.subject_id IN (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT DISTINCT subject_id FROM `physionet-data.mimiciii_demo.diagnoses_icd` WHERE icd9_code = '486'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- )\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- GROUP BY age_group\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- ORDER BY age_group;\cf2 \cb1 \strokec2 \
+\
+\
+\cf3 \cb4 \strokec3 -- SELECT l.itemid, d.label, COUNT(*) AS test_count\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM `physionet-data.mimiciii_demo.labevents` l\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- JOIN `physionet-data.mimiciii_demo.d_labitems` d ON l.itemid = d.itemid\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE l.subject_id IN (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT DISTINCT subject_id FROM `physionet-data.mimiciii_demo.diagnoses_icd` WHERE icd9_code = '486'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- )\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- GROUP BY l.itemid, d.label\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- ORDER BY test_count DESC\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- LIMIT 3;\cf2 \cb1 \strokec2 \
+\
+\
+\cf3 \cb4 \strokec3 -- SELECT COUNT(DISTINCT subject_id) AS low_spo2_patients\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- FROM `physionet-data.mimiciii_demo.chartevents`\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE itemid = 220277  -- Oxygen Saturation (SpO2)\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- AND valuenum < 90\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- AND subject_id IN (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT DISTINCT subject_id FROM `physionet-data.mimiciii_demo.diagnoses_icd` WHERE icd9_code = '486'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- );\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- WHERE dod IS NOT NULL\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- AND subject_id IN (\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 --     SELECT DISTINCT subject_id FROM `physionet-data.mimiciii_demo.diagnoses_icd` WHERE icd9_code = '486'\cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 -- );\cf2 \cb1 \strokec2 \
+}
